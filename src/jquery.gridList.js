@@ -45,14 +45,17 @@
       }
       this._createGridSnapshot();
       this.gridList.resizeGrid(this.options.lanes);
+      this._autoPosition(true);
       this._updateGridSnapshot();
 
       this.reflow();
     },
 
-    _autoPosition: function() {
+    _autoPosition: function(noSnapshot) {
       /**
        * Automatically position items that didn't come with an x or a y.
+       *
+       * @param {Boolean} noSnapshot: only alter the grid, not the snapshot of it
        */
 
       // Keep track of the no. of iterations
@@ -81,8 +84,10 @@
         }
       }
 
-      // Finally create a snapshot of the autoPositioned grid
-      this._createGridSnapshot();
+      if (!noSnapshot) {
+        // Finally create a snapshot of the autoPositioned grid
+        this._createGridSnapshot();
+      }
     },
 
     resizeItem: function(element, size) {
