@@ -50,6 +50,49 @@
       this.reflow();
     },
 
+    autoPosition: function(doNotCallOnChange) {
+      /**
+       * Automatically position items that didn't come with an x or a y. This does not call onChange.
+       */
+
+      // Create a snapshot in this._items
+      this._createGridSnapshot();
+
+      // Resize the grid automatically
+      this.gridList.resizeGrid(this.options.lanes);
+
+      // Keep track of the no. of iterations
+      var iterations = 0;
+
+      // Wait for the grid to stabilize
+      while (this.gridList.getChangedItems(this._items, '$element').length !== 0) {
+        // Create a snapshot in this._items
+        this._createGridSnapshot();
+
+        // Resize the grid automatically
+        this.gridList.resizeGrid(this.options.lanes);
+
+        // Up the iterations counter
+        iterations ++;
+
+        // Make sure we break out of the loop if it doesn't seem to terminate on its own
+        if (iterations > 10000) {
+          throw "Max. number of iterations reached.";
+        }
+      }
+
+      if (doNotCallOnChange) {
+        // Update the grid snapshot but don't call onChange
+        this._createGridSnapshot();
+      } else {
+        // Update the grid snapshot and call onChange
+        this._updateGridSnapshot();
+      }
+
+      // Update UI
+      this.reflow();
+    },
+
     resizeItem: function(element, size) {
       /**
        * Resize an item.
